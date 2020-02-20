@@ -1,0 +1,3 @@
+price:
+    css: 'div.a-section div.a-section span.a-size-medium.a-color-price'
+    type: Text

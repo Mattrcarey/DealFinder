@@ -1,0 +1,6 @@
+full_num:
+    css: span.price-large
+    type: Text
+cents:
+    css: 'div.a-section span span.a-size-small:nth-of-type(3)'
+    type: Text

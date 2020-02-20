@@ -1,3 +1,5 @@
+import sys
+import SiteScraper as ss
 # from selenium import webdriver
 # from BeautifulSoup import BeautifulSoup
 # download libraries for selenium and bsoup
@@ -14,9 +16,40 @@
 
 
 def main() :
-    command_input()
+    if(len(sys.argv)==1) :
+        scrape()
 
+    elif(sys.argv[1] == "-s") :
+        command_input()
+
+
+
+def scrape() :
+    webtypes = {
+        1: ss.scrapeAmazon,
+        2: ss.scrapeBestBuy,
+        3: ss.scrapeWalmart,
+        4: ss.scrapeNewEgg,
+        5: ss.scrapeTarget,
+        6: ss.scrapePSstore,
+        7: ss.scrapeMstore,
+        8: ss.scrapeSteam,
+        9: ss.scrapeEpicGames
+    }
+
+    file = open("games.txt", "r")
+    lines = file.readlines()
+
+    linecount = 0
+    for x in lines:
+        command = webtypes.get(linecount % 10, lambda *args: None )
+        linecount = linecount + 1
+        command(x)
+
+
+# adds a game to the list
 def addGame() :
+    "TODO: add asserts statements for types"
 
     game = input("Enter the name of the game: ")
     price = input("Enter the price you are willing to pay: ")
@@ -30,6 +63,7 @@ def addGame() :
     mstore = input("Enter the URL for the game on the microsoft store or NA: ")
     steam = input("Enter the URL for the game on Steam or NA: ")
     epicgames = input("Enter the URL for the game on Epic Games or NA: ")
+    print("")
 
     stores = [amazon, bestbuy, walmart, newegg, gamestop, psstore, mstore, steam, epicgames]
 
@@ -41,6 +75,8 @@ def addGame() :
 
     file.close()
 
+
+# prints a list of all the games
 def listGames() :
     file = open("games.txt", "r")
     lines = file.readlines()
@@ -53,29 +89,50 @@ def listGames() :
         linecount = linecount + 1
 
     for x in games :
-        print(x.split(',')[0])
+        print(x.split(',')[0] + ":" + x.split(',')[1], end="")
+    print("")
+    file.close()
 
 
+"TODO: " \
+"remove a game from the list, potentially take the last " \
+"game and write over this one"
 def removeGame() :
     return None
 
+
+# clears the file of all games
 def clearGames() :
-    return None
+    open("games.txt", 'w').close()
 
+
+# prints all commands
 def printCommands() :
-    return None
+    print("Commands\n a: add game to list\n l: list games\n"
+          " r: remove a game from the list\n c: clear all games\n"
+          " h : list all commands\n")
 
+
+# exit the program
+def stop() :
+    exit()
+
+
+# takes commands as input and executes them
 def command_input():
-    commandIn = input("Enter a command: ")
     command_switch = {
         "a" : addGame,
         "l" : listGames,
         "r" : removeGame,
         "c" : clearGames,
-        "h" : printCommands
+        "h" : printCommands,
+        "s" : stop
     }
-    command = command_switch.get(commandIn, lambda :print("Invalid Command"))
-    command()
+    while(True) :
+        commandIn = input("Enter a command: ")
+        command = command_switch.get(commandIn, lambda :print("Invalid Command"))
+        command()
+
 
 
 if __name__ == "__main__" :
