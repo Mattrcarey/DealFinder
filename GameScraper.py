@@ -1,11 +1,11 @@
 import sys
 import SiteScraper as ss
-# from selenium import webdriver
-# from BeautifulSoup import BeautifulSoup
-# download libraries for selenium and bsoup
 
-# read list of URLs and websites from txt file
-# find URLs and append to txt file
+#TODO:
+# - Add a welcome print statement when first run
+# - Add commands to input userdata into a new file
+# - user data includes users email & User Agent
+
 
 # commands:
 # -a : add game to list
@@ -23,7 +23,9 @@ def main() :
         command_input()
 
 
-
+#Todo:
+# - only scrape the line if it doesnt = NA
+# - email user of all games/locations where it is below willing price
 def scrape() :
     webtypes = {
         1: ss.scrapeAmazon,
@@ -48,9 +50,9 @@ def scrape() :
 
 
 # adds a game to the list
+#TODO:
+# - add asserts statements for types
 def addGame() :
-    "TODO: add asserts statements for types"
-
     game = input("Enter the name of the game: ")
     price = input("Enter the price you are willing to pay: ")
 
@@ -94,9 +96,8 @@ def listGames() :
     file.close()
 
 
-"TODO: " \
-"remove a game from the list, potentially take the last " \
-"game and write over this one"
+#TODO:
+# - remove a game from the list, potentially take the last game and write over this one
 def removeGame() :
     return None
 
@@ -118,7 +119,7 @@ def stop() :
     exit()
 
 
-# takes commands as input and executes them
+# takes commands as input and executes them until stop command is used
 def command_input():
     command_switch = {
         "a" : addGame,
