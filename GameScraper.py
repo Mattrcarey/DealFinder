@@ -1,5 +1,8 @@
 import sys
 import SiteScraper as ss
+import smtplib
+import ssl
+import os
 
 # set http_proxy=http://proxy_address:port
 # set http_proxy=http://user:password@proxy_address:port
@@ -60,10 +63,27 @@ def scrape() :
         command = webtypes.get(linecount % 10, lambda *args: None )
         linecount = linecount + 1
         data.update(command(x))
+    sendEmail()
 
 
-# TODO:
-# - check if any of the games are
+
+def sendEmail() :
+    if (os.stat("email.txt").st_size == 0) :
+        return -1
+
+    file = open("email.txt", "r")
+    contents = file.read()
+
+    port = 465
+    context = ssl.create_default_context()
+
+    with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server :
+        server.login("bigbeefygameboi@gmail.com", "gameboi1$")
+        server.sendmail("bigbeefygameboi@gmail.com", "mrc1613@rit.edu", contents)
+
+    open("email.txt", 'w').close()
+
+
 def checkDeals(data) :
     if (len(data) == 0):
         return None

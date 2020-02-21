@@ -2,7 +2,6 @@ import requests
 import re
 from bs4 import BeautifulSoup
 from selectorlib import Extractor
-import json
 import pandas as pd
 
 #TODO:
@@ -11,20 +10,23 @@ import pandas as pd
 
 
 def scrapeAmazon(URL) :
-    e = Extractor.from_yaml_file('amazon.yml')
-    user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'
-    headers = {'User-Agent': user_agent}
-    page = requests.get(URL, headers=headers)
-    data = e.extract(page.text)
-    dollars = float(data["full_num"])
-    cents =  float(data["cents"])
-    price = dollars + cents/100
-    return {"amazon" : price}
+    # try :
+        e = Extractor.from_yaml_file('amazon.yml')
+        user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'
+        headers = {'User-Agent': user_agent}
+        page = requests.get(URL, headers=headers)
+        data = e.extract(page.text)
+        dollars = float(data["full_num"])
+        cents =  float(data["cents"])
+        price = dollars + cents/100
+        return {"amazon" : price}
+    # except :
+    #     return {"amazon" : -1}
 
 
 
 def scrapeBestBuy(URL) :
-    try :
+    #try :
         e = Extractor.from_yaml_file('BestBuy.yml')
         user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'
         headers = {'User-Agent': user_agent}
@@ -36,13 +38,13 @@ def scrapeBestBuy(URL) :
         cents = float(values[1])
         price = dollars + cents/100
         return {"bestbuy": price}
-    except :
-        return {"bestbuy": -1}
+    # except :
+    #     return {"bestbuy": -1}
 
 
 
 def scrapeWalmart(URL) :
-    try :
+    # try :
         user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'
         headers = {'User-Agent': user_agent}
         URL = URL.rstrip()
@@ -55,13 +57,13 @@ def scrapeWalmart(URL) :
         values = re.findall('\d+', paragraphs[0])
         price = float(values[0]) + float(values[1])/100
         return {"walmart": price}
-    except :
-        return {"walmart": -1}
+    # except :
+    #     return {"walmart": -1}
 
 
 
 def scrapeNewEgg(URL) :
-    try :
+    # try :
         user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'
         headers = {'User-Agent': user_agent}
         URL = URL.rstrip()
@@ -76,13 +78,13 @@ def scrapeNewEgg(URL) :
         values = re.findall('\d+', paragraphs[2][value:])
         price = float(values[0]) + float(values[1]) / 100
         return {"newegg": price}
-    except :
-        return {"newegg": -1}
+    # except :
+    #     return {"newegg": -1}
 
 
 # scrapes Target to get the TSIN number then uses that to get the price
 def scrapeTarget(URL) :
-    try :
+    # try :
         user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'
         headers = {'User-Agent': user_agent}
         URL = URL.rstrip()
@@ -123,11 +125,11 @@ def scrapeTarget(URL) :
         values = re.findall('\d+', df.to_string())
         price = float(values[5]) + float(values[4])/100
         return {"target": price}
-    except :
-        return {"target": -1}
+    # except :
+    #     return {"target": -1}
 
-#TODO:
-# - implement this method
+
+
 def scrapePSstore(URL) :
     try :
         user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'
