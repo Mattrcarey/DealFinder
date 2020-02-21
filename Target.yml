@@ -1,7 +1,0 @@
-price:
-    css: viewport > div:nth-child(4) > div > div.Row-uds8za-0.kPQaTV > div.Col-favj32-0.styles__StyledCol-sc-1n8m629-12.gciueZ.h-padding-h-default.h-padding-t-tight > div.h-padding-b-default > div:nth-child(1) > div.style__PriceFontSize-gob4i1-0.fwkyhU.h-text-bold
-    type: Text
-test:
-    css: 'div.Col-favj32-0 div.h-padding-b-default'
-    type: Text
-

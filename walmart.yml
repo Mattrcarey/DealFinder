@@ -1,6 +1,0 @@
-dollars:
-    css: 'span.display-inline-block-xs span.hide-content span.price-characteristic'
-    type: Text
-cents:
-    css: 'span.display-inline-block-xs span.hide-content span.price-mantissa'
-    type: Text

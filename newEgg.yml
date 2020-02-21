@@ -1,6 +1,0 @@
-dollars:
-    css: 'div.subscription-price li.price-current strong'
-    type: Text
-cents:
-    css: 'div.subscription-price li.price-current sup'
-    type: Text

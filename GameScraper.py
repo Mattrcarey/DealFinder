@@ -1,6 +1,11 @@
 import sys
 import SiteScraper as ss
 
+# set http_proxy=http://proxy_address:port
+# set http_proxy=http://user:password@proxy_address:port
+# set https_proxy=https://proxy_address:port
+# set https_proxy=https://user:password@proxy_address:port
+
 #TODO:
 # - Add a welcome print statement when first run
 # - Add commands to input userdata into a new file
@@ -28,6 +33,7 @@ def main() :
 # - email user of all games/locations where it is below willing price
 def scrape() :
     webtypes = {
+        0: getGameData,
         1: ss.scrapeAmazon,
         2: ss.scrapeBestBuy,
         3: ss.scrapeWalmart,
@@ -41,12 +47,46 @@ def scrape() :
 
     file = open("games.txt", "r")
     lines = file.readlines()
-
+    data = {}
     linecount = 0
     for x in lines:
+        if(linecount%10==9) :
+            command = webtypes.get(linecount % 10, lambda *args: None)
+            linecount = linecount + 1
+            data.update(command(x))
+            checkDeals(data)
+            data = {}
+            continue
         command = webtypes.get(linecount % 10, lambda *args: None )
         linecount = linecount + 1
-        command(x)
+        data.update(command(x))
+
+
+# TODO:
+# - check if any of the games are
+def checkDeals(data) :
+    if (len(data) == 0):
+        return None
+    print(data)
+    wtp = data["wtp"]
+    game = data["game"]
+    file = open("email.txt", "a+")
+    emailContent = {}
+    for key in data :
+        if((key!="game") and (key!="wtp")) :
+            if((data[key]>0) and (data[key])<= wtp) :
+                file.write(str(game) + " is available at " + str(key) + " at the price " + str(data[key]) + "\n")
+
+
+
+
+
+def getGameData(data) :
+    values = data.split(', ')
+    game = values[0]
+    wtp = int(values[1])
+    return {"game": game, "wtp": wtp}
+
 
 
 # adds a game to the list
