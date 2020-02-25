@@ -4,36 +4,30 @@ import smtplib
 import ssl
 import os
 
-# set http_proxy=http://proxy_address:port
-# set http_proxy=http://user:password@proxy_address:port
-# set https_proxy=https://proxy_address:port
-# set https_proxy=https://user:password@proxy_address:port
-
 #TODO:
-# - Add a welcome print statement when first run
-# - Add commands to input userdata into a new file
-# - user data includes users email & User Agent
+# - Add remove game functionality
 
+# windows cmd command to set proxy settings
+# set http_proxy=http://proxy_address:port
 
 # commands:
-# -a : add game to list
-# -l : list games
-# -r : remove a game
-# -c : clear the list of games
-# -h : generates a list of commands
+# i : initialize userdata file
+# a : add game to list
+# l : list games
+# r : remove a game
+# c : clear the list of games
+# h : generates a list of commands
 
 
 def main() :
     if(len(sys.argv)==1) :
         scrape()
-
     elif(sys.argv[1] == "-s") :
+        print("Welcome to GameScraper, for a list of commands press h. Before running you must initialize")
         command_input()
 
 
-#Todo:
-# - only scrape the line if it doesnt = NA
-# - email user of all games/locations where it is below willing price
+# reads through the games.txt file and calls functions to scrape all websites for price
 def scrape() :
     webtypes = {
         0: getGameData,
@@ -42,48 +36,45 @@ def scrape() :
         3: ss.scrapeWalmart,
         4: ss.scrapeNewEgg,
         5: ss.scrapeTarget,
-        6: ss.scrapePSstore,
-        7: ss.scrapeMstore,
-        8: ss.scrapeSteam,
-        9: ss.scrapeEpicGames
+        6: ss.scrapePSstore
     }
-
+    if (not os.path.exists("games.txt")) :          # checks if file exists
+        return
     file = open("games.txt", "r")
     lines = file.readlines()
     data = {}
     linecount = 0
     for x in lines:
-        if(linecount%10==9) :
-            command = webtypes.get(linecount % 10, lambda *args: None)
+        if(linecount%7==6) :                        # the last line for a given game calls checkDeals at the end
+            command = webtypes.get(linecount % 7, lambda *args: None)
             linecount = linecount + 1
             data.update(command(x))
             checkDeals(data)
             data = {}
             continue
-        command = webtypes.get(linecount % 10, lambda *args: None )
+        command = webtypes.get(linecount % 7, lambda *args: None )
         linecount = linecount + 1
         data.update(command(x))
     sendEmail()
 
 
-
+# sends the contents of email.txt (if exists and not empty) to the email in userdata.txt
 def sendEmail() :
     if (os.stat("email.txt").st_size == 0) :
-        return -1
-
+        return None
     file = open("email.txt", "r")
     contents = file.read()
-
+    subject = "Games below your willingness to pay!"
+    message = 'Subject: {}\n\n{}'.format(subject, contents)
     port = 465
     context = ssl.create_default_context()
-
     with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server :
-        server.login("bigbeefygameboi@gmail.com", "gameboi1$")
-        server.sendmail("bigbeefygameboi@gmail.com", "mrc1613@rit.edu", contents)
+        server.login("bigbeefygameboi@gmail.com", "gameboi1$")                      # placeholder email I made
+        server.sendmail("bigbeefygameboi@gmail.com", "mrc1613@rit.edu", message)
+    open("email.txt", 'w').close()      # clears the email.txt file at the end
 
-    open("email.txt", 'w').close()
 
-
+# checks if any of the games are below willingness to pay and add them to the email.txt file
 def checkDeals(data) :
     if (len(data) == 0):
         return None
@@ -98,9 +89,7 @@ def checkDeals(data) :
                 file.write(str(game) + " is available at " + str(key) + " at the price " + str(data[key]) + "\n")
 
 
-
-
-
+# gets game and willingness to pay from the string
 def getGameData(data) :
     values = data.split(', ')
     game = values[0]
@@ -108,48 +97,50 @@ def getGameData(data) :
     return {"game": game, "wtp": wtp}
 
 
-
 # adds a game to the list
-#TODO:
-# - add asserts statements for types
+# TODO:
+#  - add asserts statements for types
 def addGame() :
     game = input("Enter the name of the game: ")
     price = input("Enter the price you are willing to pay: ")
-
     amazon = input("Enter the URL for the game on amazon or NA: ")
     bestbuy = input("Enter the URL for the game at Bestbuy or NA: ")
     walmart = input("Enter the URL for the game at Walmart or NA: ")
     newegg = input("Enter the URL for the game on Newegg or NA: ")
-    gamestop = input("Enter the URL for the game at GameStop or NA: ")
+    target = input("Enter the URL for the game at GameStop or NA: ")
     psstore = input("Enter the URL for the game on the playstation store or NA: ")
-    mstore = input("Enter the URL for the game on the microsoft store or NA: ")
-    steam = input("Enter the URL for the game on Steam or NA: ")
-    epicgames = input("Enter the URL for the game on Epic Games or NA: ")
     print("")
-
-    stores = [amazon, bestbuy, walmart, newegg, gamestop, psstore, mstore, steam, epicgames]
-
+    stores = [amazon, bestbuy, walmart, newegg, target, psstore]
     file = open("games.txt", "a+")
-    file.write(game + ", " + price + "\n") # change to \r if it doesn't work
-
+    file.write(game + ", " + price + "\n")
     for i in stores :
-        file.write(i+"\n") # change to /r if it doesn't work
-
+        file.write(i+"\n")
     file.close()
+
+
+# initializes user agent and email
+def initialize() :
+    Userdata = input("Enter the user agent for the device you are running this on (google 'my user agent') : ")
+    Email = input("Enter the email you want updates sent to you : ")
+    file = open("userdata.txt", "w+")
+    file.write(Userdata+"\n"+Email+"\n")
+    file.close()
+    return None
 
 
 # prints a list of all the games
 def listGames() :
+    if (not os.path.exists("games.txt")) :
+        print("No games")
+        return None
     file = open("games.txt", "r")
     lines = file.readlines()
-
     games = []
     linecount = 0
     for x in lines :
-        if(linecount%10 == 0) :
+        if(linecount%7 == 0) :
             games.append(x)
         linecount = linecount + 1
-
     for x in games :
         print(x.split(',')[0] + ":" + x.split(',')[1], end="")
     print("")
@@ -174,26 +165,21 @@ def printCommands() :
           " h : list all commands\n")
 
 
-# exit the program
-def stop() :
-    exit()
-
-
 # takes commands as input and executes them until stop command is used
 def command_input():
     command_switch = {
+        "i" : initialize,
         "a" : addGame,
         "l" : listGames,
         "r" : removeGame,
         "c" : clearGames,
         "h" : printCommands,
-        "s" : stop
+        "s" : exit
     }
     while(True) :
         commandIn = input("Enter a command: ")
         command = command_switch.get(commandIn, lambda :print("Invalid Command"))
         command()
-
 
 
 if __name__ == "__main__" :
