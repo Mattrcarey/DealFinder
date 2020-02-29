@@ -4,15 +4,12 @@ from bs4 import BeautifulSoup
 from selectorlib import Extractor
 import pandas as pd
 
-#TODO:
-# - take user_agent from userdata file instead of hardcoding
-# - add directories for code / textfiles / yml files
 
 
-def scrapeAmazon(URL) :
+def scrapeAmazon(URL, userdata) :
     try :
         e = Extractor.from_yaml_file('amazon.yml')
-        user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'
+        user_agent = userdata[0]
         headers = {'User-Agent': user_agent}
         page = requests.get(URL, headers=headers)
         data = e.extract(page.text)
@@ -26,10 +23,10 @@ def scrapeAmazon(URL) :
 
 
 
-def scrapeBestBuy(URL) :
+def scrapeBestBuy(URL, userdata) :
     try :
         e = Extractor.from_yaml_file('BestBuy.yml')
-        user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'
+        user_agent = userdata[0]
         headers = {'User-Agent': user_agent}
         page = requests.get(URL, headers=headers)
         data = e.extract(page.text)
@@ -45,9 +42,9 @@ def scrapeBestBuy(URL) :
 
 
 
-def scrapeWalmart(URL) :
+def scrapeWalmart(URL, userdata) :
     try :
-        user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'
+        user_agent = userdata[0]
         headers = {'User-Agent': user_agent}
         URL = URL.rstrip()
         page = requests.get(URL, headers=headers)
@@ -65,9 +62,9 @@ def scrapeWalmart(URL) :
 
 
 
-def scrapeNewEgg(URL) :
+def scrapeNewEgg(URL, userdata) :
     try :
-        user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'
+        user_agent = userdata[0]
         headers = {'User-Agent': user_agent}
         URL = URL.rstrip()
         page = requests.get(URL, headers=headers)
@@ -87,9 +84,9 @@ def scrapeNewEgg(URL) :
 
 
 # scrapes Target to get the TSIN number then uses that to get the price
-def scrapeTarget(URL) :
+def scrapeTarget(URL, userdata) :
     try :
-        user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'
+        user_agent = userdata[0]
         headers = {'User-Agent': user_agent}
         URL = URL.rstrip()
         page = requests.get(URL, headers=headers)
@@ -129,9 +126,9 @@ def scrapeTarget(URL) :
 
 
 
-def scrapePSstore(URL) :
+def scrapePSstore(URL, userdata) :
     try :
-        user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'
+        user_agent = userdata[0]
         headers = {'User-Agent': user_agent}
         URL = URL.rstrip()
         page = requests.get(URL, headers=headers)

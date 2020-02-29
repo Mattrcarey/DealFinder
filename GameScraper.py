@@ -4,8 +4,6 @@ import smtplib
 import ssl
 import os
 
-#TODO:
-# - Add remove game functionality
 
 # windows cmd command to set proxy settings
 # set http_proxy=http://proxy_address:port
@@ -38,6 +36,7 @@ def scrape() :
         5: ss.scrapeTarget,
         6: ss.scrapePSstore
     }
+    userdata = getUserData()
     if (not os.path.exists("games.txt")) :          # checks if file exists
         return
     file = open("games.txt", "r")
@@ -48,18 +47,19 @@ def scrape() :
         if(linecount%7==6) :                        # the last line for a given game calls checkDeals at the end
             command = webtypes.get(linecount % 7, lambda *args: None)
             linecount = linecount + 1
-            data.update(command(x))
+            data.update(command(x, userdata))
             checkDeals(data)
             data = {}
             continue
         command = webtypes.get(linecount % 7, lambda *args: None )
         linecount = linecount + 1
-        data.update(command(x))
-    sendEmail()
+        data.update(command(x, userdata))
+    file.close()
+    sendEmail(userdata)
 
 
 # sends the contents of email.txt (if exists and not empty) to the email in userdata.txt
-def sendEmail() :
+def sendEmail(userdata) :
     if (os.stat("email.txt").st_size == 0) :
         return None
     file = open("email.txt", "r")
@@ -70,7 +70,7 @@ def sendEmail() :
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server :
         server.login("bigbeefygameboi@gmail.com", "gameboi1$")                      # placeholder email I made
-        server.sendmail("bigbeefygameboi@gmail.com", "mrc1613@rit.edu", message)
+        server.sendmail("bigbeefygameboi@gmail.com", userdata[1], message)
     open("email.txt", 'w').close()      # clears the email.txt file at the end
 
 
@@ -78,28 +78,39 @@ def sendEmail() :
 def checkDeals(data) :
     if (len(data) == 0):
         return None
-    print(data)
+    # print(data)
     wtp = data["wtp"]
     game = data["game"]
     file = open("email.txt", "a+")
-    emailContent = {}
     for key in data :
         if((key!="game") and (key!="wtp")) :
             if((data[key]>0) and (data[key])<= wtp) :
                 file.write(str(game) + " is available at " + str(key) + " at the price " + str(data[key]) + "\n")
+    file.close()
 
 
 # gets game and willingness to pay from the string
-def getGameData(data) :
+def getGameData(data, userdata) :
     values = data.split(', ')
     game = values[0]
-    wtp = int(values[1])
+    wtp = float(values[1])
     return {"game": game, "wtp": wtp}
 
 
+# gets the users email and user agent
+def getUserData() :
+    if(not os.path.exists("userdata.txt")) :
+        print("not initialized run with argument '-s'")
+        return
+    file = open("userdata.txt", "r")
+    useragent = file.readline().strip()
+    email = file.readline().strip()
+    data = [useragent, email]
+    file.close()
+    return data
+
+
 # adds a game to the list
-# TODO:
-#  - add asserts statements for types
 def addGame() :
     game = input("Enter the name of the game: ")
     price = input("Enter the price you are willing to pay: ")
@@ -150,7 +161,23 @@ def listGames() :
 #TODO:
 # - remove a game from the list, potentially take the last game and write over this one
 def removeGame() :
-    return None
+    game = input("Enter the name of the game: ")
+    if(not os.path.exists("games.txt")) :
+        print("no games.txt file found")
+        return None
+    file = open("games.txt", "r")
+    lines = file.readlines()
+    file.close()
+    file = open("games.txt", "w")
+    line_iterator = iter(lines)
+    for line in line_iterator:
+        if(line.split(',')[0] == game) :
+            for x in range(6) :
+                next(line_iterator)
+        else :
+            file.write(line)
+    file.close()
+
 
 
 # clears the file of all games
@@ -162,7 +189,7 @@ def clearGames() :
 def printCommands() :
     print("Commands\n a: add game to list\n l: list games\n"
           " r: remove a game from the list\n c: clear all games\n"
-          " h : list all commands\n")
+          " h : list all commands\n i: initialize\n s : stop\n")
 
 
 # takes commands as input and executes them until stop command is used
