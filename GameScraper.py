@@ -118,7 +118,7 @@ def addGame() :
     bestbuy = input("Enter the URL for the game at Bestbuy or NA: ")
     walmart = input("Enter the URL for the game at Walmart or NA: ")
     newegg = input("Enter the URL for the game on Newegg or NA: ")
-    target = input("Enter the URL for the game at GameStop or NA: ")
+    target = input("Enter the URL for the game at Target or NA: ")
     psstore = input("Enter the URL for the game on the playstation store or NA: ")
     print("")
     stores = [amazon, bestbuy, walmart, newegg, target, psstore]
