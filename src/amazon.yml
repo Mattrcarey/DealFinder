@@ -1,0 +1,20 @@
+price:
+    css: '#price_inside_buybox'
+    type: Text
+price_new: #certain products new price box
+    css: '#newBuyBoxPrice'
+    type: Text
+price_apps: #apps have a different css layout
+    css: '#priceLarge'
+    type: Text
+price_books:
+    css: '#price'
+    type: Text
+kinde_price:
+    css: '#kindle_price'
+    type: Text
+price_game:
+    css: '#priceblock_ourprice'
+    type: Text
+
+
