@@ -86,11 +86,11 @@ def scrape() :
 
 # Sends the contents of email.txt (if exists and not empty) to the email in userdata.txt
 def sendEmail(userdata) :
-    if (!os.path.exists("email.txt")):
+    if (not os.path.exists("email.txt")):
         return None
     if (os.stat("email.txt").st_size == 0) :
         return None
-    if (!email_on) :
+    if (not email_on) :
         open("email.txt", 'w').close()
         return
     file = open("email.txt", "r")
