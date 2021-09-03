@@ -18,7 +18,13 @@ s             | Exit
 
 3. If you want the script to send you an email navigate into DealFinder.py and update 
    the values for EMAIL and EMAIL_PASSWORD. This is for the email account that will send 
-   emails. You can make a new email for this. 
+   emails. It needs to be a gmail account, you can make a new email for this. 
+   
+   You will also have to go to the settings and allow access to less secure apps for this 
+   gmail account.
+   
+   Once you created the account you can do that at this link : 
+   https://www.google.com/settings/security/lesssecureapps 
    
 4. If you want to receive an email with goods under your willingness to pay run the script
    using the command: src/DealFinder.py -e

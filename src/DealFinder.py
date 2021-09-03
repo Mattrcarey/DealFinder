@@ -6,6 +6,7 @@ import sys
 import ssl
 import os
 import json
+import smtplib
 
 EMAIL = "bigbeefygameboi@gmail.com"
 EMAIL_PASSWORD = "gameboi1$"
@@ -50,6 +51,7 @@ def scrapeAmazon(URL, userdata) :
 
 
 def main() :
+    global email_on
     if(len(sys.argv)==1) :
         scrape()
     elif(sys.argv[1] == "-s") :
@@ -77,7 +79,6 @@ def scrape() :
         linecount = linecount + 1
         data.update(command(x, userdata))
         if(linecount % 2 == 0) :
-            print(data)
             checkDeals(data)
             data = {}
     file.close()
@@ -86,6 +87,7 @@ def scrape() :
 
 # Sends the contents of email.txt (if exists and not empty) to the email in userdata.txt
 def sendEmail(userdata) :
+    global email_on, EMAIL, EMAIL_PASSWORD
     if (not os.path.exists("email.txt")):
         return None
     if (os.stat("email.txt").st_size == 0) :
@@ -100,7 +102,7 @@ def sendEmail(userdata) :
     port = 465
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server :
-        server.login(EMAIL, EMAIL_PASSWORD)
+        server.login("bigbeefygameboi@gmail.com", "gameboi1$")
         server.sendmail("bigbeefygameboi@gmail.com", userdata[1], message)
     open("email.txt", 'w').close()
     return
@@ -112,6 +114,8 @@ def checkDeals(data) :
         return None 
     wtp = data["wtp"]
     product = data["product"]
+    price = data["amazon"]
+    print(str(product) + ":\nWillingness:", wtp, "\nCurrent Price:", price, "\n")
     file = open("email.txt", "a+")
     for key in data :
         if((key!="product") and (key!="wtp")) :
