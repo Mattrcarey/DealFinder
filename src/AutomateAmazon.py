@@ -8,7 +8,8 @@ import os
 import json
 
 
-"""This function scraps amazon to get prices"""
+
+# Scrapes Amazon and gets returns the current price of a product.
 def scrapeAmazon(URL, userdata) :
     try:
         e = Extractor.from_yaml_file('amazon.yml')
@@ -32,7 +33,7 @@ def scrapeAmazon(URL, userdata) :
         
         csslist = {"price", "price_new", "kindle_price", "price_game", "price_apps", "price_books"}
        
-        for x in  csslist :
+        for x in  csslist : 
             try : 
                 prices = re.findall("\d+\.\d+", (data[x]))
                 price = float(prices[0])
@@ -58,33 +59,30 @@ def main() :
 
 
 def scrape() :
-    webtypes = {          # TODO: change variable name webtypes as this now only supports amazon
+    functypes = {
         0: getProductData,
         1: scrapeAmazon
     }
     userdata = getUserData()
-    if (not os.path.exists("products.txt")) :          # checks if file exists
+    if (not os.path.exists("products.txt")) :
         return
     file = open("products.txt", "r")
     lines = file.readlines()
     data = {}
     linecount = 0
-    for x in lines:
-        if(linecount%2==1) :    # the last line for a given product calls checkDeals at the end
-            command = webtypes.get(linecount % 2, lambda *args: None) #TODO: This scrapes every other line, clean this
-            linecount = linecount + 1
-            data.update(command(x, userdata))
+    for x in lines: 
+        command = functypes.get(linecount % 2, lambda *args: None)
+        linecount = linecount + 1
+        data.update(command(x, userdata))
+        if(linecount % 2 == 1) :
             checkDeals(data)
             data = {}
-            continue
-        command = webtypes.get(linecount % 2, lambda *args: None )
-        linecount = linecount + 1
-        data.update(command(x, userdata)) # TODO: figure out what this does
     file.close()
     sendEmail(userdata)
 
 
-# sends the contents of email.txt (if exists and not empty) to the email in userdata.txt
+#TODO fix this function
+# Sends the contents of email.txt (if exists and not empty) to the email in userdata.txt
 def sendEmail(userdata) : #TODO: update this function to have a placeholder email
     """if (os.stat("email.txt").st_size == 0) :
         return None
@@ -101,11 +99,11 @@ def sendEmail(userdata) : #TODO: update this function to have a placeholder emai
 """
     return
 
-# checks if any of the games are below willingness to pay and add them to the email.txt file
+# Checks if any of the products are below willingness to pay and adds them to the email.txt file
 def checkDeals(data) :
     if (len(data) == 0):
         return None
-    #print(data)
+    print(data)
     wtp = data["wtp"]
     product = data["product"]
     file = open("email.txt", "a+")
@@ -116,7 +114,7 @@ def checkDeals(data) :
     file.close()
 
 
-# gets game and willingness to pay from the string
+# Gets product and willingness to pay from the string
 def getProductData(data, userdata) :
     values = data.split(', ')
     product = values[0]
@@ -124,7 +122,7 @@ def getProductData(data, userdata) :
     return {"product": product, "wtp": wtp}
 
 
-# gets the users email and user agent
+# Gets the users email and user agent
 def getUserData() :
     if(not os.path.exists("userdata.txt")) :
         print("not initialized run with argument '-s'")
@@ -137,7 +135,7 @@ def getUserData() :
     return data
 
 
-# adds a product to the list
+# Adds a product to the list
 def addProduct() :
     product = input("Enter the name of the product: ")
     price = input("Enter the price you are willing to pay: ")
@@ -149,7 +147,7 @@ def addProduct() :
     file.close()
 
 
-# initializes user agent and email
+# Initializes user agent and email
 def initialize() :
     Userdata = input("Enter the user agent for the device you are running this on (google 'my user agent') : ")
     Email = input("Enter the email you want updates sent to : ")
@@ -159,7 +157,7 @@ def initialize() :
     return None
 
 
-# prints a list of all the products
+# Prints a list of all the products
 def listProducts() :
     if (not os.path.exists("products.txt")) :
         print("No products")
@@ -179,8 +177,8 @@ def listProducts() :
 
 
 
-# remove a product from the list, potentially take the last product and write over this one
-def removeProduct() :  #TODO: make sure this works and update if needed
+# Remove a product from the list
+def removeProduct() :
     product = input("Enter the name of the product: ")
     if(not os.path.exists("products.txt")) :
         print("no products.txt file found")
@@ -192,26 +190,25 @@ def removeProduct() :  #TODO: make sure this works and update if needed
     line_iterator = iter(lines)
     for line in line_iterator:
         if(line.split(',')[0] == product) :
-            # for x in range(6) :
-                next(line_iterator)
+            next(line_iterator)
         else :
             file.write(line)
     file.close()
 
 
-# clears the file of all products
+# Clears the file of all products
 def clearProducts() :
     open("products.txt", 'w').close()
 
 
-# prints all commands
+# Prints all commands
 def printCommands() :
     print("Commands\n a: add product to list\n l: list products\n"
           " r: remove a product from the list\n c: clear all products\n"
           " h : list all commands\n i: initialize\n s : stop\n")
 
 
-# takes commands as input and executes them until stop command is used
+# Takes commands as input and executes them until stop command is used
 def command_input():
     command_switch = {
         "i" : initialize,
