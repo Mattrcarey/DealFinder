@@ -29,9 +29,8 @@ def scrapeAmazon(URL, userdata) :
         }
         page = requests.get(URL, headers=headers)
         data = e.extract(page.text)
-        print(data)
         
-        csslist = {"price", "price_new", "kindle_price", "price_game", "price_apps", "price_books"}
+        csslist = ["price_new","price", "kindle_price", "price_kindle", "app_price", "price_game", "price_apps", "price_books"]
        
         for x in  csslist : 
             try : 
@@ -40,8 +39,6 @@ def scrapeAmazon(URL, userdata) :
                 break
             except :
                 continue
-
-        print(price)
         return {"amazon" : price}
     except :
         print("Error with amazon scrape")

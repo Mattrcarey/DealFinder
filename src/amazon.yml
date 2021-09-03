@@ -10,11 +10,16 @@ price_apps: #apps have a different css layout
 price_books:
     css: '#price'
     type: Text
-kinde_price:
+kindle_price:
+    css: '#kindle-price'
+    type: Text
+price_kindle:
     css: '#kindle_price'
     type: Text
 price_game:
     css: '#priceblock_ourprice'
     type: Text
-
+app_price:
+    css: '#actualPriceValue'
+    type: Text
 
