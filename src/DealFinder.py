@@ -7,6 +7,10 @@ import ssl
 import os
 import json
 
+EMAIL = "bigbeefygameboi@gmail.com"
+EMAIL_PASSWORD = "gameboi1$"
+
+email_on = False 
 
 
 # Scrapes Amazon and gets returns the current price of a product.
@@ -45,14 +49,15 @@ def scrapeAmazon(URL, userdata) :
         return {"amazon" : -1}
 
 
-
 def main() :
     if(len(sys.argv)==1) :
         scrape()
     elif(sys.argv[1] == "-s") :
-        print("Welcome to AutomateAmazon, for a list of commands press h. Before running you must initialize")
+        print("Welcome to DealFinder, for a list of commands press h. Before running you must initialize")
         command_input()
-
+    elif(sys.argv[1] == "-e") :
+        email_on = True
+        scrape()
 
 
 def scrape() :
@@ -71,18 +76,23 @@ def scrape() :
         command = functypes.get(linecount % 2, lambda *args: None)
         linecount = linecount + 1
         data.update(command(x, userdata))
-        if(linecount % 2 == 1) :
+        if(linecount % 2 == 0) :
+            print(data)
             checkDeals(data)
             data = {}
     file.close()
     sendEmail(userdata)
 
 
-#TODO fix this function
 # Sends the contents of email.txt (if exists and not empty) to the email in userdata.txt
-def sendEmail(userdata) : #TODO: update this function to have a placeholder email
-    """if (os.stat("email.txt").st_size == 0) :
+def sendEmail(userdata) :
+    if (!os.path.exists("email.txt")):
         return None
+    if (os.stat("email.txt").st_size == 0) :
+        return None
+    if (!email_on) :
+        open("email.txt", 'w').close()
+        return
     file = open("email.txt", "r")
     contents = file.read()
     subject = "Products below your willingness to pay!"
@@ -90,17 +100,16 @@ def sendEmail(userdata) : #TODO: update this function to have a placeholder emai
     port = 465
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server :
-        server.login("bigbeefygameboi@gmail.com", "gameboi1$")                      # placeholder email I made
+        server.login(EMAIL, EMAIL_PASSWORD)
         server.sendmail("bigbeefygameboi@gmail.com", userdata[1], message)
-    open("email.txt", 'w').close()      # clears the email.txt file at the end
-"""
+    open("email.txt", 'w').close()
     return
+
 
 # Checks if any of the products are below willingness to pay and adds them to the email.txt file
 def checkDeals(data) :
     if (len(data) == 0):
-        return None
-    print(data)
+        return None 
     wtp = data["wtp"]
     product = data["product"]
     file = open("email.txt", "a+")
