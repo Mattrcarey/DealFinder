@@ -8,8 +8,8 @@ import os
 import json
 import smtplib
 
-EMAIL = "bigbeefygameboi@gmail.com"
-EMAIL_PASSWORD = "gameboi1$"
+EMAIL = "Email name here"
+EMAIL_PASSWORD = "Email password here"
 
 email_on = False 
 
@@ -102,8 +102,8 @@ def sendEmail(userdata) :
     port = 465
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server :
-        server.login("bigbeefygameboi@gmail.com", "gameboi1$")
-        server.sendmail("bigbeefygameboi@gmail.com", userdata[1], message)
+        server.login(EMAIL, EMAIL_PASSWORD)
+        server.sendmail(EMAIL, userdata[1], message)
     open("email.txt", 'w').close()
     return
 
