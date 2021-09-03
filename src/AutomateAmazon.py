@@ -29,10 +29,17 @@ def scrapeAmazon(URL, userdata) :
         page = requests.get(URL, headers=headers)
         data = e.extract(page.text)
         print(data)
-        #dollars = float(data["full_num"])
-        #cents = float(data["cents"])
-        #price = dollars + cents/100
-        price = float(data["price"]) #TODO: Add support for different page types
+        
+        csslist = {"price", "price_new", "kindle_price", "price_game", "price_apps", "price_books"}
+       
+        for x in  csslist :
+            try : 
+                prices = re.findall("\d+\.\d+", (data[x]))
+                price = float(prices[0])
+                break
+            except :
+                continue
+
         print(price)
         return {"amazon" : price}
     except :
@@ -79,7 +86,7 @@ def scrape() :
 
 # sends the contents of email.txt (if exists and not empty) to the email in userdata.txt
 def sendEmail(userdata) : #TODO: update this function to have a placeholder email
-    if (os.stat("email.txt").st_size == 0) :
+    """if (os.stat("email.txt").st_size == 0) :
         return None
     file = open("email.txt", "r")
     contents = file.read()
@@ -91,13 +98,14 @@ def sendEmail(userdata) : #TODO: update this function to have a placeholder emai
         server.login("bigbeefygameboi@gmail.com", "gameboi1$")                      # placeholder email I made
         server.sendmail("bigbeefygameboi@gmail.com", userdata[1], message)
     open("email.txt", 'w').close()      # clears the email.txt file at the end
-
+"""
+    return
 
 # checks if any of the games are below willingness to pay and add them to the email.txt file
 def checkDeals(data) :
     if (len(data) == 0):
         return None
-    print(data)
+    #print(data)
     wtp = data["wtp"]
     product = data["product"]
     file = open("email.txt", "a+")
