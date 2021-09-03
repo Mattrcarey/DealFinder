@@ -115,7 +115,7 @@ def checkDeals(data) :
     wtp = data["wtp"]
     product = data["product"]
     price = data["amazon"]
-    print(str(product) + ":\nWillingness:", wtp, "\nCurrent Price:", price, "\n")
+    print("Product:", product, "\nWillingness:", wtp, "\nCurrent Price:", price, "\n")
     file = open("email.txt", "a+")
     for key in data :
         if((key!="product") and (key!="wtp")) :
