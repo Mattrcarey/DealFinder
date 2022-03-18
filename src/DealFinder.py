@@ -14,7 +14,7 @@ EMAIL_PASSWORD = "Email password here"
 email_on = False 
 
 
-# Scrapes Amazon and gets returns the current price of a product.
+# Scrapes Amazon and returns the current price of a product.
 def scrapeAmazon(URL, userdata) :
     try:
         e = Extractor.from_yaml_file('amazon.yml')
